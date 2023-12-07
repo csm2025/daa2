@@ -1,37 +1,24 @@
-def bellman_ford(V, edges, S):
-    dist = [float('inf')] * V
-    dist[S] = 0
+def bellman_ford(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
 
-    for i in range(V - 1):
-        for edge in edges:
-            u, v, wt = edge
-            if dist[u] != float('inf') and dist[u] + wt < dist[v]:
-                dist[v] = dist[u] + wt
+    for _ in range(len(graph) - 1):
+        for node in graph:
+            for neighbor, weight in graph[node].items():
+                if distances[node] + weight < distances[neighbor]:
+                    distances[neighbor] = distances[node] + weight
 
-    # Nth relaxation to check negative cycle
-    for edge in edges:
-        u, v, wt = edge
-        if dist[u] != float('inf') and dist[u] + wt < dist[v]:
-            return [-1]
+    return distances
 
-    return dist
+# Example usage
+graph = {
+    'A': {'B': 5, 'C': 2},
+    'B': {'C': -1, 'D': 1},
+    'C': {'B': 3, 'D': 2},
+    'D': {'C': -3}
+}
 
-if __name__ == "__main__":
-    V = 6
-    edges = [
-        [3, 2, 6],
-        [5, 3, 1],
-        [0, 1, 5],
-        [1, 5, -3],
-        [1, 2, -2],
-        [3, 4, -2],
-        [2, 4, 3]
-    ]
+start_node = 'A'
+distances = bellman_ford(graph, start_node)
 
-    S = 0
-    dist = bellman_ford(V, edges, S)
-
-    for d in dist:
-        print(d, end=" ")
-
-    print()
+print(distances)
